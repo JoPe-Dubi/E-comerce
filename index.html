@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CompreAqui - E-commerce moderno com os melhores preços e produtos de qualidade">
+    <meta name="keywords" content="e-commerce, loja online, produtos, ofertas, eletrônicos, moda">
+    <title>CompreAqui - Sua loja online de confiança</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>Compre<span class="highlight">Aqui</span>
+                        <div class="arrow-circle">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </h1>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="O que você está procurando?" class="search-input">
+                    <button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+                <div class="header-actions">
+                    <button class="user-btn" onclick="openLoginModal()">
+                        <i class="fas fa-user"></i> 
+                        <span>Entrar</span>
+                    </button>
+                    <button class="cart-btn" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i> 
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="#" onclick="filterByCategory('eletronicos')"><i class="fas fa-laptop"></i> Eletrônicos</a></li>
+                <li><a href="#" onclick="filterByCategory('moda')"><i class="fas fa-tshirt"></i> Moda</a></li>
+                <li><a href="#" onclick="filterByCategory('casa')"><i class="fas fa-home"></i> Casa & Decoração</a></li>
+                <li><a href="#" onclick="filterByCategory('games')"><i class="fas fa-gamepad"></i> Games</a></li>
+                <li><a href="#" onclick="filterByCategory('esportes')"><i class="fas fa-dumbbell"></i> Esportes</a></li>
+                <li><a href="#" onclick="filterByCategory('livros')"><i class="fas fa-book"></i> Livros</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="banner-content">
+            <h2>Ofertas Imperdíveis</h2>
+            <p>Até 70% de desconto em produtos selecionados</p>
+            <button class="cta-btn" onclick="scrollToOffers()">Ver Ofertas</button>
+        </div>
+        <div class="categories-carousel">
+            <div class="carousel-container">
+                <button class="carousel-btn prev" onclick="slideCarousel(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="carousel-track" id="categoryCarousel">
+                    <div class="carousel-slide" data-category="eletronicos">
+                        <div class="category-header">
+                            <i class="fas fa-laptop"></i>
+                            <h4>Eletrônicos</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <img src="img/products/iphone-15-pro-1.jpg" alt="iPhone 15 Pro">
+                                <span class="offer-price">R$ 6.999</span>
+                                <span class="offer-discount">-15%</span>
+                            </div>
+                            <div class="offer-item">
+                                <img src="img/products/galaxy-s24-1.jpg" alt="Galaxy S24">
+                                <span class="offer-price">R$ 4.299</span>
+                                <span class="offer-discount">-20%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="moda">
+                        <div class="category-header">
+                            <i class="fas fa-tshirt"></i>
+                            <h4>Moda</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">👕</div>
+                                <span class="offer-price">R$ 89</span>
+                                <span class="offer-discount">-30%</span>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">👖</div>
+                                <span class="offer-price">R$ 149</span>
+                                <span class="offer-discount">-25%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="casa">
+                        <div class="category-header">
+                            <i class="fas fa-home"></i>
+                            <h4>Casa & Decoração</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">🛋️</div>
+                                <span class="offer-price">R$ 899</span>
+                                <span class="offer-discount">-40%</span>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">🪴</div>
+                                <span class="offer-price">R$ 59</span>
+                                <span class="offer-discount">-35%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="games">
+                        <div class="category-header">
+                            <i class="fas fa-gamepad"></i>
+                            <h4>Games</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">🎮</div>
+                                <span class="offer-price">R$ 2.299</span>
+                                <span class="offer-discount">-25%</span>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">🕹️</div>
+                                <span class="offer-price">R$ 199</span>
+                                <span class="offer-discount">-30%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="esportes">
+                        <div class="category-header">
+                            <i class="fas fa-dumbbell"></i>
+                            <h4>Esportes</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">🏋️</div>
+                                <span class="offer-price">R$ 299</span>
+                                <span class="offer-discount">-45%</span>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">⚽</div>
+                                <span class="offer-price">R$ 79</span>
+                                <span class="offer-discount">-20%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="livros">
+                        <div class="category-header">
+                            <i class="fas fa-book"></i>
+                            <h4>Livros</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">📚</div>
+                                <span class="offer-price">R$ 39</span>
+                                <span class="offer-discount">-50%</span>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">📖</div>
+                                <span class="offer-price">R$ 29</span>
+                                <span class="offer-discount">-40%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="slideCarousel(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Categorias em Destaque</h2>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterByCategory('eletronicos')">
+                    <div class="category-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h3>Eletrônicos</h3>
+                    <p>Smartphones, notebooks e mais</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('moda')">
+                    <div class="category-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3>Moda</h3>
+                    <p>Roupas e acessórios</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('casa')">
+                    <div class="category-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Casa & Decoração</h3>
+                    <p>Móveis e decoração</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('games')">
+                    <div class="category-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Games</h3>
+                    <p>Consoles e jogos</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('esportes')">
+                    <div class="category-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3>Esportes</h3>
+                    <p>Equipamentos esportivos</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('livros')">
+                    <div class="category-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Livros</h3>
+                    <p>Literatura e educação</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CompreAqui</h3>
+                    <p>Sua loja online de confiança com os melhores preços e produtos de qualidade.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Atendimento</h4>
+                    <ul>
+                        <li><a href="pages/faq.html">Central de Ajuda</a></li>
+                        <li><a href="pages/contact.html">Fale Conosco</a></li>
+                        <li><a href="pages/returns.html">Trocas e Devoluções</a></li>
+                        <li><a href="pages/tracking.html">Rastreamento</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Sobre</h4>
+                    <ul>
+                        <li><a href="pages/about.html">Quem Somos</a></li>
+                        <li><a href="pages/careers.html">Trabalhe Conosco</a></li>
+                        <li><a href="pages/privacy.html">Política de Privacidade</a></li>
+                        <li><a href="pages/terms.html">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa" title="Visa"></i>
+                        <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                        <i class="fab fa-pix" title="PIX"></i>
+                        <i class="fas fa-barcode" title="Boleto"></i>
+                        <i class="fab fa-paypal" title="PayPal"></i>
+                    </div>
+                    <div class="security-badges">
+                        <img src="img/ssl-badge.svg" alt="SSL Seguro" loading="lazy">
+                        <img src="img/security-badge.svg" alt="Site Seguro" loading="lazy">
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CompreAqui. Todos os direitos reservados.</p>
+                <p>CNPJ: 00.000.000/0001-00 | Endereço: Rua do Comércio, 123 - São Paulo, SP</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Meu Carrinho</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Seu carrinho está vazio</p>
+                <button onclick="toggleCart()">Continuar Comprando</button>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <div class="subtotal">
+                    <span>Subtotal: </span>
+                    <span id="cartSubtotal">R$ 0,00</span>
+                </div>
+                <div class="shipping">
+                    <span>Frete: </span>
+                    <span id="cartShipping">Calcular</span>
+                </div>
+                <div class="total">
+                    <strong>Total: <span id="cartTotal">R$ 0,00</span></strong>
+                </div>
+            </div>
+            <button class="checkout-btn" onclick="goToCheckout()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Entrar</h2>
+                <p id="modalSubtitle">Acesse sua conta</p>
+            </div>
+            <form id="authForm">
+                <div class="form-group" id="nameGroup" style="display: none;">
+                    <input type="text" id="name" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="E-mail" required>
+                </div>
+                <div class="form-group password-group">
+                    <input type="password" id="password" placeholder="Senha" required>
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password')">
+                        <i class="fas fa-eye" id="password-eye"></i>
+                    </button>
+                </div>
+                <div class="form-group password-group" id="confirmPasswordGroup" style="display: none;">
+                    <input type="password" id="confirmPassword" placeholder="Confirmar senha">
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">
+                        <i class="fas fa-eye" id="confirmPassword-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" id="authSubmitBtn" aria-label="Entrar na conta">Entrar</button>
+            </form>
+            <div class="social-login">
+                <p>Ou entre com:</p>
+                <div class="social-buttons">
+                    <button class="social-btn google" onclick="loginWithGoogle()">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="social-btn facebook" onclick="loginWithFacebook()">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p id="switchAuthMode">
+                    Não tem conta? <a href="#" onclick="switchToRegister()">Cadastre-se</a>
+                </p>
+                <p><a href="#" onclick="showForgotPassword()">Esqueci minha senha</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <i class="notification-icon"></i>
+            <span class="notification-message"></span>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

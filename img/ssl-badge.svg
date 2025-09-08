@@ -1,0 +1,28 @@
+<svg width="80" height="40" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="80" height="40" rx="4" fill="#2E7D32"/>
+  
+  <!-- Lock Icon -->
+  <g transform="translate(8, 8)">
+    <!-- Lock Body -->
+    <rect x="6" y="10" width="12" height="14" rx="2" fill="white"/>
+    
+    <!-- Lock Shackle -->
+    <path d="M9 10 V7 C9 5.34315 10.3431 4 12 4 C13.6569 4 15 5.34315 15 7 V10" 
+          stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- Keyhole -->
+    <circle cx="12" cy="17" r="2" fill="#2E7D32"/>
+    <rect x="11.5" y="17" width="1" height="3" fill="#2E7D32"/>
+  </g>
+  
+  <!-- SSL Text -->
+  <text x="28" y="16" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="white">SSL</text>
+  <text x="28" y="26" font-family="Arial, sans-serif" font-size="6" fill="white">SEGURO</text>
+  
+  <!-- Checkmark -->
+  <g transform="translate(60, 12)">
+    <circle cx="8" cy="8" r="8" fill="white"/>
+    <path d="M4 8 L7 11 L12 5" stroke="#2E7D32" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

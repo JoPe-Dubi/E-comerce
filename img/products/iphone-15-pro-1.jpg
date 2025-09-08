@@ -1,0 +1,97 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="300" fill="#F8F9FA"/>
+  
+  <!-- iPhone Body -->
+  <rect x="75" y="30" width="150" height="240" rx="25" fill="url(#phoneGradient)" stroke="#C0C0C0" stroke-width="1"/>
+  
+  <!-- Screen -->
+  <rect x="85" y="50" width="130" height="200" rx="15" fill="#000000"/>
+  
+  <!-- Dynamic Island -->
+  <rect x="125" y="60" width="50" height="8" rx="4" fill="#1C1C1E"/>
+  
+  <!-- Screen Content -->
+  <rect x="90" y="80" width="120" height="170" rx="10" fill="url(#screenGradient)"/>
+  
+  <!-- App Icons Grid -->
+  <g transform="translate(100, 90)">
+    <!-- Row 1 -->
+    <rect x="0" y="0" width="20" height="20" rx="4" fill="#E63946"/>
+    <rect x="25" y="0" width="20" height="20" rx="4" fill="#007AFF"/>
+    <rect x="50" y="0" width="20" height="20" rx="4" fill="#34C759"/>
+    <rect x="75" y="0" width="20" height="20" rx="4" fill="#FF9500"/>
+    
+    <!-- Row 2 -->
+    <rect x="0" y="25" width="20" height="20" rx="4" fill="#AF52DE"/>
+    <rect x="25" y="25" width="20" height="20" rx="4" fill="#FF2D92"/>
+    <rect x="50" y="25" width="20" height="20" rx="4" fill="#5AC8FA"/>
+    <rect x="75" y="25" width="20" height="20" rx="4" fill="#FFCC02"/>
+    
+    <!-- Row 3 -->
+    <rect x="0" y="50" width="20" height="20" rx="4" fill="#FF3B30"/>
+    <rect x="25" y="50" width="20" height="20" rx="4" fill="#30D158"/>
+    <rect x="50" y="50" width="20" height="20" rx="4" fill="#64D2FF"/>
+    <rect x="75" y="50" width="20" height="20" rx="4" fill="#BF5AF2"/>
+  </g>
+  
+  <!-- Dock -->
+  <rect x="95" y="220" width="110" height="25" rx="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+  <rect x="105" y="225" width="15" height="15" rx="3" fill="#007AFF"/>
+  <rect x="125" y="225" width="15" height="15" rx="3" fill="#34C759"/>
+  <rect x="145" y="225" width="15" height="15" rx="3" fill="#FF9500"/>
+  <rect x="165" y="225" width="15" height="15" rx="3" fill="#E63946"/>
+  
+  <!-- Home Indicator -->
+  <rect x="135" y="260" width="30" height="3" rx="1.5" fill="#FFFFFF" opacity="0.6"/>
+  
+  <!-- Camera System -->
+  <g transform="translate(85, 40)">
+    <rect x="0" y="0" width="35" height="35" rx="8" fill="#1C1C1E"/>
+    <circle cx="10" cy="10" r="6" fill="#2C2C2E" stroke="#48484A" stroke-width="1"/>
+    <circle cx="25" cy="10" r="6" fill="#2C2C2E" stroke="#48484A" stroke-width="1"/>
+    <circle cx="10" cy="25" r="6" fill="#2C2C2E" stroke="#48484A" stroke-width="1"/>
+    
+    <!-- Camera Lenses -->
+    <circle cx="10" cy="10" r="3" fill="#000000"/>
+    <circle cx="25" cy="10" r="3" fill="#000000"/>
+    <circle cx="10" cy="25" r="3" fill="#000000"/>
+    
+    <!-- Lens Reflections -->
+    <circle cx="12" cy="8" r="1" fill="#FFFFFF" opacity="0.3"/>
+    <circle cx="27" cy="8" r="1" fill="#FFFFFF" opacity="0.3"/>
+    <circle cx="12" cy="23" r="1" fill="#FFFFFF" opacity="0.3"/>
+  </g>
+  
+  <!-- Side Buttons -->
+  <rect x="70" y="100" width="3" height="15" rx="1.5" fill="#C0C0C0"/>
+  <rect x="70" y="120" width="3" height="25" rx="1.5" fill="#C0C0C0"/>
+  <rect x="70" y="150" width="3" height="25" rx="1.5" fill="#C0C0C0"/>
+  
+  <!-- Action Button -->
+  <rect x="227" y="110" width="3" height="20" rx="1.5" fill="#FF6B35"/>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="phoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5F5DC;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E6E6E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D3D3D3;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C1C1E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Reflection -->
+  <rect x="85" y="50" width="65" height="200" rx="15" fill="url(#reflection)" opacity="0.1"/>
+  
+  <defs>
+    <linearGradient id="reflection" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+</svg>
