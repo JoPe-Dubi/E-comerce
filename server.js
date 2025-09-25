@@ -1,18 +1,101 @@
 // CompreAqui E-commerce - Servidor Backend
 
+// Carregar variáveis de ambiente PRIMEIRO
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const winston = require('winston');
+const expressWinston = require('express-winston');
 const database = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'compreaqui-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+// Configurar logger
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+    ),
+    defaultMeta: { service: 'compreaqui-api' },
+    transports: [
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' }),
+        new winston.transports.Console({
+            format: winston.format.simple()
+        })
+    ]
+});
+
+// Verificar se JWT_SECRET está definido
+if (!JWT_SECRET) {
+    logger.error('❌ ERRO CRÍTICO: JWT_SECRET não está definido nas variáveis de ambiente!');
+    logger.error('💡 Crie um arquivo .env baseado no .env.example');
+    process.exit(1);
+}
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100, // máximo 100 requests por IP por janela
+    message: {
+        success: false,
+        message: 'Muitas tentativas. Tente novamente em 15 minutos.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 5, // máximo 5 tentativas de login por IP
+    message: {
+        success: false,
+        message: 'Muitas tentativas de login. Tente novamente em 15 minutos.'
+    },
+    skipSuccessfulRequests: true
+});
+
+// Middlewares de segurança
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com"]
+        }
+    }
+}));
+
+app.use(compression());
+app.use(limiter);
+
+// Logging de requests
+app.use(expressWinston.logger({
+    winstonInstance: logger,
+    meta: true,
+    msg: "HTTP {{req.method}} {{req.url}}",
+    expressFormat: true,
+    colorize: false,
+    ignoreRoute: function (req, res) { return false; }
+}));
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('.'));
 
 // Middleware de autenticação
@@ -34,7 +117,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 // Rotas de autenticação
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -70,7 +153,7 @@ app.post('/api/auth/register', async (req, res) => {
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
             JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
         );
 
         res.status(201).json({
@@ -88,7 +171,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', authLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -122,7 +205,7 @@ app.post('/api/auth/login', async (req, res) => {
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
             JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
         );
 
         // Remover senha do retorno
@@ -281,6 +364,96 @@ app.delete('/api/cart/:productId', async (req, res) => {
     }
 });
 
+// Rotas de perfil de usuário
+app.get('/api/profile', authenticateToken, async (req, res) => {
+    try {
+        const profile = await database.getUserProfile(req.user.id);
+        
+        if (!profile) {
+            return res.json({
+                success: true,
+                profile: null,
+                message: 'Perfil não encontrado'
+            });
+        }
+
+        res.json({
+            success: true,
+            profile: profile
+        });
+    } catch (error) {
+        console.error('Erro ao buscar perfil:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro interno do servidor'
+        });
+    }
+});
+
+app.post('/api/profile', authenticateToken, async (req, res) => {
+    try {
+        const {
+            cpf, phone, birth_date, cep, street, number,
+            complement, neighborhood, city, state,
+            newsletter_opt_in, sms_opt_in
+        } = req.body;
+
+        // Validações básicas
+        if (!cpf || !phone || !cep || !street || !number || !neighborhood || !city || !state) {
+            return res.status(400).json({
+                success: false,
+                message: 'Campos obrigatórios não preenchidos'
+            });
+        }
+
+        // Validar formato do CPF (11 dígitos)
+        const cpfNumbers = cpf.replace(/\D/g, '');
+        if (cpfNumbers.length !== 11) {
+            return res.status(400).json({
+                success: false,
+                message: 'CPF deve ter 11 dígitos'
+            });
+        }
+
+        // Validar formato do CEP (8 dígitos)
+        const cepNumbers = cep.replace(/\D/g, '');
+        if (cepNumbers.length !== 8) {
+            return res.status(400).json({
+                success: false,
+                message: 'CEP deve ter 8 dígitos'
+            });
+        }
+
+        const profileData = {
+            cpf: cpfNumbers,
+            phone,
+            birth_date: birth_date || null,
+            cep: cepNumbers,
+            street,
+            number,
+            complement: complement || null,
+            neighborhood,
+            city,
+            state,
+            newsletter_opt_in: newsletter_opt_in ? 1 : 0,
+            sms_opt_in: sms_opt_in ? 1 : 0
+        };
+
+        await database.createOrUpdateUserProfile(req.user.id, profileData);
+
+        res.json({
+            success: true,
+            message: 'Perfil salvo com sucesso!'
+        });
+    } catch (error) {
+        console.error('Erro ao salvar perfil:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro interno do servidor'
+        });
+    }
+});
+
 // Rota para servir o frontend
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -313,7 +486,9 @@ async function startServer() {
         app.listen(PORT, () => {
             console.log(`\n🚀 Servidor CompreAqui rodando em http://localhost:${PORT}`);
             console.log(`📊 Banco de dados SQLite inicializado`);
-            console.log(`🔐 Credenciais de teste: admin@compreaqui.com / 123456\n`);
+            console.log(`🔐 Credenciais de teste: admin@compreaqui.com / 123456`);
+            console.log(`🔒 JWT configurado com variáveis de ambiente`);
+            console.log(`🌍 CORS configurado para: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}\n`);
         });
     } catch (error) {
         console.error('Erro ao iniciar servidor:', error);

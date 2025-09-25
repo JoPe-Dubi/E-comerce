@@ -126,17 +126,29 @@ const SearchManager = {
 
     // Buscar produtos
     searchProducts: (query) => {
-        if (!window.MainProductManager) {
-            console.error('MainProductManager não encontrado');
+        try {
+            if (!window.MainProductManager) {
+                console.warn('MainProductManager não encontrado, retornando array vazio');
+                return [];
+            }
+
+            if (!query || typeof query !== 'string') {
+                console.warn('Query de busca inválida');
+                return [];
+            }
+
+            // Usar o MainProductManager para buscar
+            const results = window.MainProductManager.searchProducts(query, SearchState.filters.category, {
+                priceRange: SearchState.filters.priceRange,
+                brands: SearchState.filters.brand ? [SearchState.filters.brand] : [],
+                rating: 0
+            });
+
+            return Array.isArray(results) ? results : [];
+        } catch (error) {
+            console.error('Erro na busca de produtos:', error);
             return [];
         }
-
-        // Usar o MainProductManager para buscar
-        return window.MainProductManager.searchProducts(query, SearchState.filters.category, {
-            priceRange: SearchState.filters.priceRange,
-            brands: SearchState.filters.brand ? [SearchState.filters.brand] : [],
-            rating: 0
-        });
     },
 
     // Gerar sugestões
@@ -428,7 +440,7 @@ const SearchManager = {
     // Atualizar estatísticas de busca
     updateSearchStats: (query, resultCount) => {
         // Aqui você pode enviar dados para analytics
-        console.log(`Busca: "${query}" - ${resultCount} resultados`);
+        // Busca realizada
     },
 
     // Configurar autocomplete
@@ -704,4 +716,120 @@ if (typeof document !== 'undefined') {
     } else {
         SearchManager.init();
     }
+}
+
+
+function renderSearchResults(results) {
+    const resultsContainer = document.getElementById('search-results');
+    if (!resultsContainer) return;
+    
+    // Limpar container
+    resultsContainer.innerHTML = '';
+    
+    if (!results || results.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-search';
+        
+        const title = document.createElement('h3');
+        title.textContent = 'Nenhum resultado encontrado';
+        
+        const message = document.createElement('p');
+        message.textContent = 'Tente usar palavras-chave diferentes ou verifique a ortografia.';
+        
+        noResults.appendChild(icon);
+        noResults.appendChild(title);
+        noResults.appendChild(message);
+        
+        resultsContainer.appendChild(noResults);
+        return;
+    }
+    
+    // Renderizar resultados
+    results.forEach(result => {
+        const resultItem = createSearchResultItem(result);
+        resultsContainer.appendChild(resultItem);
+    });
+}
+
+function createSearchResultItem(result) {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+    
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'result-image';
+    
+    const img = document.createElement('img');
+    img.src = result.image || 'img/placeholder.jpg';
+    img.alt = SecurityUtils.escapeHTML(result.name);
+    img.loading = 'lazy';
+    
+    imageContainer.appendChild(img);
+    
+    const infoContainer = document.createElement('div');
+    infoContainer.className = 'result-info';
+    
+    const title = document.createElement('h4');
+    title.className = 'result-title';
+    title.textContent = result.name;
+    
+    const description = document.createElement('p');
+    description.className = 'result-description';
+    description.textContent = result.description;
+    
+    const price = document.createElement('span');
+    price.className = 'result-price';
+    price.textContent = `R$ ${result.price.toFixed(2)}`;
+    
+    infoContainer.appendChild(title);
+    infoContainer.appendChild(description);
+    infoContainer.appendChild(price);
+    
+    item.appendChild(imageContainer);
+    item.appendChild(infoContainer);
+    
+    // Adicionar evento de clique
+    item.onclick = () => {
+        window.location.href = `product.html?id=${result.id}`;
+    };
+    
+    return item;
+}
+
+function renderSearchSuggestions(suggestions) {
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    if (!suggestionsContainer) return;
+    
+    // Limpar container
+    suggestionsContainer.innerHTML = '';
+    
+    if (!suggestions || suggestions.length === 0) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+    
+    suggestions.forEach(suggestion => {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.className = 'suggestion-item';
+        
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-search';
+        
+        const text = document.createElement('span');
+        text.textContent = suggestion.text;
+        
+        suggestionItem.appendChild(icon);
+        suggestionItem.appendChild(text);
+        
+        suggestionItem.onclick = () => {
+            performSearch(suggestion.text);
+            suggestionsContainer.style.display = 'none';
+        };
+        
+        suggestionsContainer.appendChild(suggestionItem);
+    });
+    
+    suggestionsContainer.style.display = 'block';
 }

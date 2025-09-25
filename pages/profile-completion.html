@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complementar Cadastro - CompreaQui</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>CompreaQui</h1>
+                </div>
+                <nav class="nav">
+                    <a href="../index.html" class="nav-link">Início</a>
+                    <a href="../index.html#products" class="nav-link">Produtos</a>
+                    <a href="../index.html#about" class="nav-link">Sobre</a>
+                    <a href="../index.html#contact" class="nav-link">Contato</a>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-icon" id="cartBtn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <div class="user-menu" id="userMenu">
+                        <button class="btn-icon" id="userBtn">
+                            <span class="user-icon">👤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="profile-completion-container">
+                <div class="profile-completion-header">
+                    <h1>Complementar Cadastro</h1>
+                    <p>Complete suas informações para uma melhor experiência de compra</p>
+                </div>
+
+                <form id="profileCompletionForm" class="profile-form">
+                    <!-- Informações Pessoais -->
+                    <div class="form-section">
+                        <h2>Informações Pessoais</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Nome Completo *</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cpf">CPF *</label>
+                                <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Telefone *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="(00) 00000-0000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birthDate">Data de Nascimento</label>
+                                <input type="date" id="birthDate" name="birthDate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Endereço -->
+                    <div class="form-section">
+                        <h2>Endereço de Entrega</h2>
+                        <div class="form-row">
+                            <div class="form-group cep-group">
+                                <label for="cep">CEP *</label>
+                                <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+                                <button type="button" id="searchCepBtn" class="btn-search-cep">Buscar</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group flex-2">
+                                <label for="street">Rua *</label>
+                                <input type="text" id="street" name="street" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="number">Número *</label>
+                                <input type="text" id="number" name="number" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="complement">Complemento</label>
+                                <input type="text" id="complement" name="complement" placeholder="Apto, Bloco, etc.">
+                            </div>
+                            <div class="form-group">
+                                <label for="neighborhood">Bairro *</label>
+                                <input type="text" id="neighborhood" name="neighborhood" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">Cidade *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">Estado *</label>
+                                <select id="state" name="state" required>
+                                    <option value="">Selecione o estado</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferências -->
+                    <div class="form-section">
+                        <h2>Preferências</h2>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="newsletter" name="newsletter">
+                                    <span class="checkmark"></span>
+                                    Receber ofertas e novidades por email
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="sms" name="sms">
+                                    <span class="checkmark"></span>
+                                    Receber notificações por SMS
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="form-actions">
+                        <button type="button" id="backBtn" class="btn-secondary">
+                            ← Voltar
+                        </button>
+                        <button type="submit" id="saveBtn" class="btn-primary">
+                            Salvar Informações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CompreaQui</h3>
+                    <p>Sua loja online de confiança</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="../index.html">Início</a></li>
+                        <li><a href="../index.html#products">Produtos</a></li>
+                        <li><a href="../index.html#about">Sobre</a></li>
+                        <li><a href="../index.html#contact">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>Email: contato@compreaqui.com</p>
+                    <p>Telefone: (11) 1234-5678</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CompreaQui. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Script específico para a página de complementação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se o usuário está logado
+            if (!AuthManager.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Carregar dados existentes do usuário
+            loadUserData();
+
+            // Event listeners
+            document.getElementById('backBtn').addEventListener('click', function() {
+                window.location.href = '../index.html';
+            });
+
+            document.getElementById('searchCepBtn').addEventListener('click', searchCep);
+            document.getElementById('cep').addEventListener('blur', searchCep);
+            
+            // Máscaras para campos
+            applyMasks();
+        });
+
+        function loadUserData() {
+            const user = AuthManager.getCurrentUser();
+            if (user) {
+                document.getElementById('fullName').value = user.name || '';
+                
+                // Carregar dados do servidor
+                loadProfileFromServer();
+            }
+        }
+
+        async function loadProfileFromServer() {
+            try {
+                const token = Utils.getFromStorage('auth_token');
+                if (!token) return;
+
+                const response = await fetch('/api/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.profile) {
+                    const profile = result.profile;
+                    
+                    // Preencher campos com dados do servidor
+                    if (profile.cpf) {
+                        document.getElementById('cpf').value = formatCpf(profile.cpf);
+                    }
+                    if (profile.phone) {
+                        document.getElementById('phone').value = profile.phone;
+                    }
+                    if (profile.birth_date) {
+                        document.getElementById('birthDate').value = profile.birth_date;
+                    }
+                    if (profile.cep) {
+                        document.getElementById('cep').value = formatCep(profile.cep);
+                    }
+                    if (profile.street) {
+                        document.getElementById('street').value = profile.street;
+                    }
+                    if (profile.number) {
+                        document.getElementById('number').value = profile.number;
+                    }
+                    if (profile.complement) {
+                        document.getElementById('complement').value = profile.complement;
+                    }
+                    if (profile.neighborhood) {
+                        document.getElementById('neighborhood').value = profile.neighborhood;
+                    }
+                    if (profile.city) {
+                        document.getElementById('city').value = profile.city;
+                    }
+                    if (profile.state) {
+                        document.getElementById('state').value = profile.state;
+                    }
+                    
+                    document.getElementById('newsletter').checked = profile.newsletter_opt_in === 1;
+                    document.getElementById('sms').checked = profile.sms_opt_in === 1;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
+            }
+        }
+
+        function formatCpf(cpf) {
+            return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+
+        function formatCep(cep) {
+            return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+        }
+
+        function applyMasks() {
+            // Máscara para CPF
+            document.getElementById('cpf').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            });
+
+            // Máscara para telefone
+            document.getElementById('phone').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value;
+            });
+
+            // Máscara para CEP
+            document.getElementById('cep').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value;
+            });
+        }
+
+        async function searchCep() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+
+                if (!data.erro) {
+                    document.getElementById('street').value = data.logradouro || '';
+                    document.getElementById('neighborhood').value = data.bairro || '';
+                    document.getElementById('city').value = data.localidade || '';
+                    document.getElementById('state').value = data.uf || '';
+                    
+                    // Focar no campo número
+                    document.getElementById('number').focus();
+                } else {
+                    Utils.showNotification('CEP não encontrado', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar CEP:', error);
+                Utils.showNotification('Erro ao buscar CEP', 'error');
+            }
+        }
+
+        // Submissão do formulário
+        document.getElementById('profileCompletionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const profileData = {};
+            
+            // Coletar dados do formulário
+            profileData.cpf = document.getElementById('cpf').value;
+            profileData.phone = document.getElementById('phone').value;
+            profileData.birth_date = document.getElementById('birthDate').value || null;
+            profileData.cep = document.getElementById('cep').value;
+            profileData.street = document.getElementById('street').value;
+            profileData.number = document.getElementById('number').value;
+            profileData.complement = document.getElementById('complement').value || null;
+            profileData.neighborhood = document.getElementById('neighborhood').value;
+            profileData.city = document.getElementById('city').value;
+            profileData.state = document.getElementById('state').value;
+            profileData.newsletter_opt_in = document.getElementById('newsletter').checked;
+            profileData.sms_opt_in = document.getElementById('sms').checked;
+
+            // Validar campos obrigatórios
+            const requiredFields = ['cpf', 'phone', 'cep', 'street', 'number', 'neighborhood', 'city', 'state'];
+            const missingFields = requiredFields.filter(field => !profileData[field]);
+            
+            if (missingFields.length > 0) {
+                Utils.showNotification('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            try {
+                const token = Utils.getFromStorage('auth_token');
+                if (!token) {
+                    Utils.showNotification('Erro de autenticação. Faça login novamente.', 'error');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // Desabilitar botão durante o envio
+                const saveBtn = document.getElementById('saveBtn');
+                const originalText = saveBtn.textContent;
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Salvando...';
+
+                const response = await fetch('/api/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Utils.showNotification('Perfil salvo com sucesso!', 'success');
+                    
+                    // Redirecionar após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 2000);
+                } else {
+                    Utils.showNotification(result.message || 'Erro ao salvar perfil', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar perfil:', error);
+                Utils.showNotification('Erro de conexão. Tente novamente.', 'error');
+            } finally {
+                // Reabilitar botão
+                const saveBtn = document.getElementById('saveBtn');
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

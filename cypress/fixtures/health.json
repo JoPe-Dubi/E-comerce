@@ -1,0 +1,25 @@
+{
+  "status": "OK",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "uptime": 3600,
+  "version": "1.0.0",
+  "environment": "test",
+  "database": {
+    "status": "connected",
+    "pool": {
+      "total": 5,
+      "active": 2,
+      "idle": 3
+    }
+  },
+  "memory": {
+    "used": "45.2 MB",
+    "total": "128 MB",
+    "percentage": 35.3
+  },
+  "services": {
+    "api": "healthy",
+    "database": "healthy",
+    "cache": "healthy"
+  }
+}

@@ -44,9 +44,35 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment variables file (CRÍTICO - contém informações sensíveis)
 .env
 .env.test
+.env.local
+.env.production
+.env.staging
+
+# Banco de dados SQLite (contém dados sensíveis)
+*.db
+*.sqlite
+*.sqlite3
+compreaqui.db
+
+# Arquivos de configuração local
+config.local.js
+config.local.json
+
+# Certificados SSL
+*.pem
+*.key
+*.crt
+
+# Backups
+*.backup
+*.bak
+
+# Arquivos de upload
+uploads/
+public/uploads/
 
 # parcel-bundler cache
 .cache

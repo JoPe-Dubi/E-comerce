@@ -24,7 +24,8 @@ const ProductState = {
     sortBy: 'newest',
     searchQuery: '',
     wishlist: [],
-    recentlyViewed: []
+    recentlyViewed: [],
+    customProducts: []
 };
 
 // Dados de produtos expandidos
@@ -226,11 +227,86 @@ const EXTENDED_PRODUCTS = [
 
 // Gerenciador de Produtos
 const ProductManager = {
-    // Inicializar gerenciador
-    init: () => {
-        ProductState.allProducts = EXTENDED_PRODUCTS;
+    // Inicializar gerenciador de produtos
+    init: async () => {
+        await ProductManager.loadCustomProducts();
+        ProductState.allProducts = [...EXTENDED_PRODUCTS, ...ProductState.customProducts];
         ProductManager.loadFromStorage();
+        await ProductManager.updateOffersDisplay();
         ProductManager.applyFilters();
+    },
+    
+    // Carregar produtos customizados do banco SQLite
+    loadCustomProducts: async () => {
+        try {
+            if (window.productDB && window.productDB.isInitialized) {
+                const dbProducts = await window.productDB.getAllProducts();
+                ProductState.customProducts = dbProducts || [];
+                console.log('Produtos carregados do SQLite:', ProductState.customProducts.length);
+            } else {
+                // Fallback para localStorage
+                const customProducts = JSON.parse(localStorage.getItem('compreaqui_products') || '[]');
+                ProductState.customProducts = customProducts;
+                console.log('Produtos carregados do localStorage:', ProductState.customProducts.length);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar produtos:', error);
+            ProductState.customProducts = [];
+        }
+    },
+    
+    // Atualizar exibição de ofertas na página principal
+    updateOffersDisplay: async () => {
+        try {
+            let offers = [];
+            
+            // Tentar carregar ofertas do banco SQLite
+            if (window.productDB && window.productDB.isInitialized) {
+                const featuredProducts = await window.productDB.getFeaturedProducts();
+                offers = featuredProducts.map(product => ({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    originalPrice: product.originalPrice,
+                    image: product.images && product.images[0] ? product.images[0] : null,
+                    category: product.category,
+                    discount: product.discount
+                }));
+                console.log('Ofertas carregadas do SQLite:', offers.length);
+            } else {
+                // Fallback para localStorage
+                offers = JSON.parse(localStorage.getItem('compreaqui_offers') || '[]');
+                console.log('Ofertas carregadas do localStorage:', offers.length);
+            }
+            
+            offers.forEach(offer => {
+                ProductManager.addOfferToCarousel(offer);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar ofertas:', error);
+        }
+    },
+    
+    // Adicionar oferta ao carousel da página principal
+    addOfferToCarousel: (offer) => {
+        const categorySlide = document.querySelector(`[data-category="${offer.category}"] .offer-products`);
+        
+        if (categorySlide) {
+            const offerItem = document.createElement('div');
+            offerItem.className = 'offer-item';
+            offerItem.innerHTML = `
+                ${offer.image ? 
+                    `<img src="${offer.image}" alt="${offer.name}" onerror="this.outerHTML='<div class=\"placeholder-img\">${offer.name.charAt(0)}</div>';">` :
+                    `<div class="placeholder-img">${offer.name.charAt(0)}</div>`
+                }
+                <div class="offer-info">
+                    <span class="offer-name">${offer.name}</span>
+                    <span class="offer-price">R$ ${offer.price.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `;
+            
+            categorySlide.appendChild(offerItem);
+        }
     },
 
     // Carregar dados do localStorage
@@ -327,57 +403,73 @@ const ProductManager = {
         }
     },
 
-    // Renderizar card do produto
     renderProductCard: (product) => {
-        const isInWishlist = ProductState.wishlist.includes(product.id);
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.setAttribute('data-product-id', product.id);
         
-        const discountBadge = product.discount > 0 ? 
-            `<div class="discount-badge">-${product.discount}%</div>` : '';
-
-        const originalPrice = product.originalPrice ? 
-            `<span class="original-price">${Utils.formatPrice(product.originalPrice)}</span>` : '';
-
-        return `
-            <div class="product-card" data-product-id="${product.id}">
-                ${discountBadge}
-                <div class="product-actions">
-                    <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" 
-                            onclick="ProductManager.toggleWishlist(${product.id})" 
-                            title="${isInWishlist ? 'Remover da lista de desejos' : 'Adicionar à lista de desejos'}">
-                        <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
-                    </button>
-                    <button class="quick-view-btn" 
-                            onclick="ProductManager.showQuickView(${product.id})" 
-                            title="Visualização rápida">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-                <div class="product-image-container" onclick="ProductManager.viewProduct(${product.id})">
-                    <img src="${product.images[0]}" alt="${product.name}" class="product-image" loading="lazy">
-                </div>
-                <div class="product-info">
-                    <div class="product-brand">${product.brand}</div>
-                    <h3 class="product-title" onclick="ProductManager.viewProduct(${product.id})">${product.name}</h3>
-                    <div class="product-rating">
-                        <div class="stars">${Utils.generateStars(product.rating)}</div>
-                        <span class="rating-count">(${product.reviews})</span>
-                    </div>
-                    <div class="product-price">
-                        <span class="current-price">${Utils.formatPrice(product.price)}</span>
-                        ${originalPrice}
-                    </div>
-                    <button class="add-to-cart" onclick="ProductManager.addToCart(${product.id})">
-                        <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
-                    </button>
-                </div>
-            </div>
-        `;
+        // Imagem do produto
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'product-image';
+        
+        const img = document.createElement('img');
+        img.src = product.image;
+        img.alt = SecurityUtils.escapeHTML(product.name);
+        img.loading = 'lazy';
+        
+        imageContainer.appendChild(img);
+        
+        // Informações do produto
+        const infoContainer = document.createElement('div');
+        infoContainer.className = 'product-info';
+        
+        const title = document.createElement('h3');
+        title.className = 'product-title';
+        title.textContent = product.name;
+        
+        const description = document.createElement('p');
+        description.className = 'product-description';
+        description.textContent = product.description;
+        
+        const priceContainer = document.createElement('div');
+        priceContainer.className = 'product-price';
+        
+        const price = document.createElement('span');
+        price.className = 'price';
+        price.textContent = `R$ ${product.price.toFixed(2)}`;
+        
+        priceContainer.appendChild(price);
+        
+        // Botão de adicionar ao carrinho
+        const addButton = document.createElement('button');
+        addButton.className = 'btn btn-primary add-to-cart-btn';
+        addButton.textContent = 'Adicionar ao Carrinho';
+        addButton.onclick = () => CartManager.addToCart(product);
+        
+        // Montar o card
+        infoContainer.appendChild(title);
+        infoContainer.appendChild(description);
+        infoContainer.appendChild(priceContainer);
+        infoContainer.appendChild(addButton);
+        
+        card.appendChild(imageContainer);
+        card.appendChild(infoContainer);
+        
+        return card;
     },
 
     // Renderizar lista de produtos
     renderProductList: (products, containerId) => {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) {
+            console.warn(`Container com ID '${containerId}' não encontrado`);
+            return false;
+        }
+
+        if (!Array.isArray(products)) {
+            console.warn('Lista de produtos deve ser um array');
+            return false;
+        }
 
         if (products.length === 0) {
             container.innerHTML = `
@@ -387,18 +479,26 @@ const ProductManager = {
                     <p>Tente ajustar os filtros ou fazer uma nova busca</p>
                 </div>
             `;
-            return;
+            return true;
         }
 
-        container.innerHTML = products.map(product => 
-            ProductManager.renderProductCard(product)
-        ).join('');
+        try {
+            // Usar renderProduct do MainProductManager se disponível, senão usar renderProductCard local
+            const renderFunction = window.MainProductManager?.renderProduct || ProductManager.renderProductCard;
+            container.innerHTML = products.map(product => renderFunction(product)).join('');
 
-        // Aplicar animações
-        container.querySelectorAll('.product-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-            card.classList.add('fade-in');
-        });
+            // Aplicar animações
+            container.querySelectorAll('.product-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('Erro ao renderizar produtos:', error);
+            container.innerHTML = '<div class="error-message">Erro ao carregar produtos</div>';
+            return false;
+        }
     },
 
     // Visualizar produto
@@ -492,24 +592,17 @@ const ProductManager = {
         });
     },
 
-    // Obter produtos em destaque
+    // Usar funções do MainProductManager para evitar duplicação
     getFeaturedProducts: () => {
-        return ProductState.allProducts.filter(product => product.featured);
+        return window.MainProductManager ? window.MainProductManager.getFeaturedProducts() : [];
     },
 
-    // Obter produtos mais vendidos
     getBestSellers: () => {
-        return ProductState.allProducts
-            .sort((a, b) => b.reviews - a.reviews)
-            .slice(0, 8);
+        return window.MainProductManager ? window.MainProductManager.getBestSellers() : [];
     },
 
-    // Obter ofertas do dia
     getDailyOffers: () => {
-        return ProductState.allProducts
-            .filter(product => product.discount > 0)
-            .sort((a, b) => b.discount - a.discount)
-            .slice(0, 8);
+        return window.MainProductManager ? window.MainProductManager.getDailyOffers() : [];
     }
 };
 
@@ -527,4 +620,61 @@ if (typeof document !== 'undefined') {
     } else {
         ProductManager.init();
     }
+}
+
+function renderProductGrid(products) {
+    const container = document.getElementById('products-grid');
+    if (!container) return;
+    
+    // Limpar container
+    container.innerHTML = '';
+    
+    if (!products || products.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.className = 'empty-products-message';
+        emptyMessage.textContent = 'Nenhum produto encontrado.';
+        container.appendChild(emptyMessage);
+        return;
+    }
+    
+    // Renderizar produtos
+    products.forEach(product => {
+        const productCard = ProductManager.renderProductCard(product);
+        container.appendChild(productCard);
+    });
+}
+
+function renderCategoryFilter(categories) {
+    const filterContainer = document.getElementById('category-filter');
+    if (!filterContainer) return;
+    
+    // Limpar container
+    filterContainer.innerHTML = '';
+    
+    // Botão "Todos"
+    const allButton = document.createElement('button');
+    allButton.className = 'filter-btn active';
+    allButton.textContent = 'Todos';
+    allButton.onclick = () => {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        allButton.classList.add('active');
+        renderProductGrid(ProductManager.getAllProducts());
+    };
+    
+    filterContainer.appendChild(allButton);
+    
+    // Botões de categoria
+    categories.forEach(category => {
+        const button = document.createElement('button');
+        button.className = 'filter-btn';
+        button.textContent = category;
+        button.onclick = () => {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            const filteredProducts = ProductManager.getProductsByCategory(category);
+            renderProductGrid(filteredProducts);
+        };
+        
+        filterContainer.appendChild(button);
+    });
 }

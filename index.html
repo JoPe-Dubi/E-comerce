@@ -6,6 +6,19 @@
     <meta name="description" content="CompreAqui - E-commerce moderno com os melhores preços e produtos de qualidade">
     <meta name="keywords" content="e-commerce, loja online, produtos, ofertas, eletrônicos, moda">
     <title>CompreAqui - Sua loja online de confiança</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CompreAqui">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/icon-16.png">
+    <link rel="apple-touch-icon" href="img/icon-180.png">
+    
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -13,20 +26,21 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="header" role="banner">
         <div class="container">
             <div class="header-top">
                 <div class="logo">
                     <h1>Compre<span class="highlight">Aqui</span>
-                        <div class="arrow-circle">
+                        <div class="arrow-circle" aria-hidden="true">
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </h1>
                 </div>
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="O que você está procurando?" class="search-input">
-                    <button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
-                    <div class="search-suggestions" id="searchSuggestions"></div>
+                <div class="search-container" role="search">
+                    <label for="searchInput" class="sr-only">Buscar produtos</label>
+                    <input type="text" id="searchInput" placeholder="O que você está procurando?" class="search-input" aria-label="Campo de busca">
+                    <button class="search-btn" onclick="performSearch()" aria-label="Buscar"><i class="fas fa-search" aria-hidden="true"></i></button>
+                    <div class="search-suggestions" id="searchSuggestions" role="listbox" aria-label="Sugestões de busca"></div>
                 </div>
                 <div class="header-actions">
                     <button class="user-btn" onclick="openLoginModal()">
@@ -43,15 +57,15 @@
     </header>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Menu principal">
         <div class="container">
-            <ul class="nav-menu">
-                <li><a href="#" onclick="filterByCategory('eletronicos')"><i class="fas fa-laptop"></i> Eletrônicos</a></li>
-                <li><a href="#" onclick="filterByCategory('moda')"><i class="fas fa-tshirt"></i> Moda</a></li>
-                <li><a href="#" onclick="filterByCategory('casa')"><i class="fas fa-home"></i> Casa & Decoração</a></li>
-                <li><a href="#" onclick="filterByCategory('games')"><i class="fas fa-gamepad"></i> Games</a></li>
-                <li><a href="#" onclick="filterByCategory('esportes')"><i class="fas fa-dumbbell"></i> Esportes</a></li>
-                <li><a href="#" onclick="filterByCategory('livros')"><i class="fas fa-book"></i> Livros</a></li>
+            <ul class="nav-menu" role="menubar">
+                <li role="none"><a href="#" onclick="filterByCategory('eletronicos')" role="menuitem"><i class="fas fa-laptop" aria-hidden="true"></i> Eletrônicos</a></li>
+                <li role="none"><a href="#" onclick="filterByCategory('moda')" role="menuitem"><i class="fas fa-tshirt" aria-hidden="true"></i> Moda</a></li>
+                <li role="none"><a href="#" onclick="filterByCategory('casa')" role="menuitem"><i class="fas fa-home" aria-hidden="true"></i> Casa & Decoração</a></li>
+                <li role="none"><a href="#" onclick="filterByCategory('games')" role="menuitem"><i class="fas fa-gamepad" aria-hidden="true"></i> Games</a></li>
+                <li role="none"><a href="#" onclick="filterByCategory('esportes')" role="menuitem"><i class="fas fa-dumbbell" aria-hidden="true"></i> Esportes</a></li>
+                <li role="none"><a href="#" onclick="filterByCategory('livros')" role="menuitem"><i class="fas fa-book" aria-hidden="true"></i> Livros</a></li>
             </ul>
         </div>
     </nav>
@@ -77,13 +91,17 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <img src="img/products/iphone-15-pro-1.jpg" alt="iPhone 15 Pro">
-                                <span class="offer-price">R$ 6.999</span>
-                                <span class="offer-discount">-15%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">iPhone 15 Pro</span>
+                                    <span class="offer-price">R$ 6.999</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <img src="img/products/galaxy-s24-1.jpg" alt="Galaxy S24">
-                                <span class="offer-price">R$ 4.299</span>
-                                <span class="offer-discount">-20%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Galaxy S24</span>
+                                    <span class="offer-price">R$ 4.299</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,13 +113,17 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <div class="placeholder-img">👕</div>
-                                <span class="offer-price">R$ 89</span>
-                                <span class="offer-discount">-30%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Camiseta Básica</span>
+                                    <span class="offer-price">R$ 89</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <div class="placeholder-img">👖</div>
-                                <span class="offer-price">R$ 149</span>
-                                <span class="offer-discount">-25%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Calça Jeans</span>
+                                    <span class="offer-price">R$ 149</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -113,13 +135,17 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <div class="placeholder-img">🛋️</div>
-                                <span class="offer-price">R$ 899</span>
-                                <span class="offer-discount">-40%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Sofá 3 Lugares</span>
+                                    <span class="offer-price">R$ 899</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <div class="placeholder-img">🪴</div>
-                                <span class="offer-price">R$ 59</span>
-                                <span class="offer-discount">-35%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Vaso Decorativo</span>
+                                    <span class="offer-price">R$ 59</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,13 +157,17 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <div class="placeholder-img">🎮</div>
-                                <span class="offer-price">R$ 2.299</span>
-                                <span class="offer-discount">-25%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">PlayStation 5</span>
+                                    <span class="offer-price">R$ 2.299</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <div class="placeholder-img">🕹️</div>
-                                <span class="offer-price">R$ 199</span>
-                                <span class="offer-discount">-30%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Controle Gamer</span>
+                                    <span class="offer-price">R$ 199</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -149,13 +179,39 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <div class="placeholder-img">🏋️</div>
-                                <span class="offer-price">R$ 299</span>
-                                <span class="offer-discount">-45%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Kit Halteres</span>
+                                    <span class="offer-price">R$ 299</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <div class="placeholder-img">⚽</div>
-                                <span class="offer-price">R$ 79</span>
-                                <span class="offer-discount">-20%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Bola de Futebol</span>
+                                    <span class="offer-price">R$ 79</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" data-category="eletrodomesticos">
+                        <div class="category-header">
+                            <i class="fas fa-blender"></i>
+                            <h4>Eletrodomésticos</h4>
+                        </div>
+                        <div class="offer-products">
+                            <div class="offer-item">
+                                <div class="placeholder-img">☕</div>
+                                <div class="offer-info">
+                                    <span class="offer-name">Cafeteira Elétrica</span>
+                                    <span class="offer-price">R$ 549</span>
+                                </div>
+                            </div>
+                            <div class="offer-item">
+                                <div class="placeholder-img">🍽️</div>
+                                <div class="offer-info">
+                                    <span class="offer-name">Jogo de Pratos</span>
+                                    <span class="offer-price">R$ 299</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -167,13 +223,17 @@
                         <div class="offer-products">
                             <div class="offer-item">
                                 <div class="placeholder-img">📚</div>
-                                <span class="offer-price">R$ 39</span>
-                                <span class="offer-discount">-50%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">Clean Code</span>
+                                    <span class="offer-price">R$ 39</span>
+                                </div>
                             </div>
                             <div class="offer-item">
                                 <div class="placeholder-img">📖</div>
-                                <span class="offer-price">R$ 29</span>
-                                <span class="offer-discount">-40%</span>
+                                <div class="offer-info">
+                                    <span class="offer-name">JavaScript Guide</span>
+                                    <span class="offer-price">R$ 29</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -186,53 +246,55 @@
         </div>
     </section>
 
+
+
     <!-- Categories Section -->
     <section class="categories-section">
         <div class="container">
             <h2 class="section-title">Categorias em Destaque</h2>
             <div class="categories-grid">
-                <div class="category-card" onclick="filterByCategory('eletronicos')">
-                    <div class="category-icon">
+                <button class="category-card" onclick="filterByCategory('eletronicos')" aria-label="Filtrar por categoria Eletrônicos">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-laptop"></i>
                     </div>
                     <h3>Eletrônicos</h3>
                     <p>Smartphones, notebooks e mais</p>
-                </div>
-                <div class="category-card" onclick="filterByCategory('moda')">
-                    <div class="category-icon">
+                </button>
+                <button class="category-card" onclick="filterByCategory('moda')" aria-label="Filtrar por categoria Moda">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-tshirt"></i>
                     </div>
                     <h3>Moda</h3>
                     <p>Roupas e acessórios</p>
-                </div>
-                <div class="category-card" onclick="filterByCategory('casa')">
-                    <div class="category-icon">
+                </button>
+                <button class="category-card" onclick="filterByCategory('casa')" aria-label="Filtrar por categoria Casa e Decoração">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-home"></i>
                     </div>
                     <h3>Casa & Decoração</h3>
                     <p>Móveis e decoração</p>
-                </div>
-                <div class="category-card" onclick="filterByCategory('games')">
-                    <div class="category-icon">
+                </button>
+                <button class="category-card" onclick="filterByCategory('games')" aria-label="Filtrar por categoria Games">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-gamepad"></i>
                     </div>
                     <h3>Games</h3>
                     <p>Consoles e jogos</p>
-                </div>
-                <div class="category-card" onclick="filterByCategory('esportes')">
-                    <div class="category-icon">
+                </button>
+                <button class="category-card" onclick="filterByCategory('esportes')" aria-label="Filtrar por categoria Esportes">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-dumbbell"></i>
                     </div>
                     <h3>Esportes</h3>
                     <p>Equipamentos esportivos</p>
-                </div>
-                <div class="category-card" onclick="filterByCategory('livros')">
-                    <div class="category-icon">
+                </button>
+                <button class="category-card" onclick="filterByCategory('livros')" aria-label="Filtrar por categoria Livros">
+                    <div class="category-icon" aria-hidden="true">
                         <i class="fas fa-book"></i>
                     </div>
                     <h3>Livros</h3>
                     <p>Literatura e educação</p>
-                </div>
+                </button>
             </div>
         </div>
     </section>
@@ -240,17 +302,17 @@
 
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>CompreAqui</h3>
                     <p>Sua loja online de confiança com os melhores preços e produtos de qualidade.</p>
-                    <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <div class="social-links" role="list" aria-label="Redes sociais">
+                        <a href="#" aria-label="Seguir no Facebook" role="listitem"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Seguir no Instagram" role="listitem"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Seguir no Twitter" role="listitem"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Seguir no YouTube" role="listitem"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -337,7 +399,7 @@
                     <input type="text" id="name" placeholder="Nome completo">
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" placeholder="E-mail" required>
+                    <input type="email" id="email" placeholder="admin@exemplo.com" required>
                 </div>
                 <div class="form-group password-group">
                     <input type="password" id="password" placeholder="Senha" required>
@@ -387,10 +449,85 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/main.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/products.js"></script>
-    <script src="js/search.js"></script>
+        <script src="js/security.js?v=1"></script>
+        <script src="js/validation.js?v=1"></script>
+        <script src="js/utils.js?v=1"></script>
+        <script src="js/database.js?v=3"></script>
+        <script src="js/main.js?v=3"></script>
+        <script src="js/cart.js?v=3"></script>
+        <script src="js/auth.js?v=3"></script>
+        <script src="js/products.js?v=3"></script>
+        <script src="js/search.js?v=3"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Registrar Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('✅ Service Worker registrado:', registration.scope);
+                    
+                    // Verificar atualizações
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // Nova versão disponível
+                                Utils.showNotification('Nova versão disponível! Recarregue a página.', 'info');
+                            }
+                        });
+                    });
+                    
+                    // Escutar mensagens do Service Worker
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        if (event.data.type === 'SYNC_COMPLETE') {
+                            Utils.showNotification(`${event.data.data.synced} itens sincronizados!`, 'success');
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao registrar Service Worker:', error);
+                }
+            });
+        }
+
+        // Configurar lazy loading e preload inteligente
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Utils !== 'undefined') {
+                Utils.setupLazyLoading();
+                Utils.setupIntelligentPreload();
+            }
+        });
+
+        // Detectar instalação PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostrar botão de instalação personalizado
+            const installButton = document.createElement('button');
+            installButton.textContent = '📱 Instalar App';
+            installButton.className = 'install-button';
+            installButton.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`PWA install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installButton.remove();
+                }
+            };
+            
+            document.querySelector('.header-actions').appendChild(installButton);
+        });
+
+        // Detectar quando PWA foi instalada
+        window.addEventListener('appinstalled', () => {
+            Utils.showNotification('App instalado com sucesso! 🎉', 'success');
+            deferredPrompt = null;
+        });
+    </script>
 </body>
 </html>

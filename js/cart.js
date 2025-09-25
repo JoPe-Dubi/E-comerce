@@ -260,7 +260,10 @@ const CartManager = {
         const cartItems = document.getElementById('cartItems');
         const cartFooter = document.getElementById('cartFooter');
         
-        if (!cartItems) return;
+        if (!cartItems) {
+            console.warn('Elemento cartItems não encontrado');
+            return;
+        }
 
         if (CartState.items.length === 0) {
             cartItems.innerHTML = `
@@ -636,4 +639,108 @@ if (typeof document !== 'undefined') {
     } else {
         CartManager.init();
     }
+}
+
+function renderCartItems() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotalElement = document.getElementById('cart-total');
+    
+    if (!cartItemsContainer) return;
+    
+    // Limpar container
+    cartItemsContainer.innerHTML = '';
+    
+    if (cart.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.className = 'empty-cart-message';
+        emptyMessage.textContent = 'Seu carrinho está vazio';
+        cartItemsContainer.appendChild(emptyMessage);
+        
+        if (cartTotalElement) {
+            cartTotalElement.textContent = 'R$ 0,00';
+        }
+        return;
+    }
+    
+    let total = 0;
+    
+    cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.dataset.productId = item.id;
+        
+        // Imagem do produto
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'cart-item-image';
+        
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.name;
+        img.loading = 'lazy';
+        
+        imageDiv.appendChild(img);
+        
+        // Informações do produto
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'cart-item-info';
+        
+        const nameElement = document.createElement('h4');
+        nameElement.textContent = item.name;
+        
+        const priceElement = document.createElement('p');
+        priceElement.className = 'cart-item-price';
+        priceElement.textContent = Utils.formatPrice(item.price);
+        
+        infoDiv.appendChild(nameElement);
+        infoDiv.appendChild(priceElement);
+        
+        // Controles de quantidade
+        const quantityDiv = document.createElement('div');
+        quantityDiv.className = 'cart-item-quantity';
+        
+        const decreaseBtn = document.createElement('button');
+        decreaseBtn.className = 'quantity-btn decrease';
+        decreaseBtn.textContent = '-';
+        decreaseBtn.onclick = () => updateQuantity(item.id, item.quantity - 1);
+        
+        const quantitySpan = document.createElement('span');
+        quantitySpan.className = 'quantity';
+        quantitySpan.textContent = item.quantity;
+        
+        const increaseBtn = document.createElement('button');
+        increaseBtn.className = 'quantity-btn increase';
+        increaseBtn.textContent = '+';
+        increaseBtn.onclick = () => updateQuantity(item.id, item.quantity + 1);
+        
+        quantityDiv.appendChild(decreaseBtn);
+        quantityDiv.appendChild(quantitySpan);
+        quantityDiv.appendChild(increaseBtn);
+        
+        // Botão remover
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-item-btn';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.onclick = () => removeFromCart(item.id);
+        
+        // Subtotal
+        const subtotalDiv = document.createElement('div');
+        subtotalDiv.className = 'cart-item-subtotal';
+        subtotalDiv.textContent = Utils.formatPrice(item.price * item.quantity);
+        
+        cartItem.appendChild(imageDiv);
+        cartItem.appendChild(infoDiv);
+        cartItem.appendChild(quantityDiv);
+        cartItem.appendChild(removeBtn);
+        cartItem.appendChild(subtotalDiv);
+        
+        cartItemsContainer.appendChild(cartItem);
+        
+        total += item.price * item.quantity;
+    });
+    
+    if (cartTotalElement) {
+        cartTotalElement.textContent = Utils.formatPrice(total);
+    }
+    
+    updateCartBadge();
 }

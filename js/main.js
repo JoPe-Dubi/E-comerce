@@ -155,120 +155,7 @@ const SAMPLE_PRODUCTS = [
     }
 ];
 
-// Utilitários
-const Utils = {
-    // Formatar preço em reais
-    formatPrice: (price) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(price);
-    },
-
-    // Debounce para otimizar performance
-    debounce: (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    },
-
-    // Gerar estrelas para avaliação
-    generateStars: (rating, maxStars = 5) => {
-        let stars = '';
-        for (let i = 1; i <= maxStars; i++) {
-            if (i <= rating) {
-                stars += '<i class="fas fa-star"></i>';
-            } else if (i - 0.5 <= rating) {
-                stars += '<i class="fas fa-star-half-alt"></i>';
-            } else {
-                stars += '<i class="far fa-star"></i>';
-            }
-        }
-        return stars;
-    },
-
-    // Salvar no localStorage
-    saveToStorage: (key, data) => {
-        try {
-            localStorage.setItem(key, JSON.stringify(data));
-        } catch (error) {
-            console.error('Erro ao salvar no localStorage:', error);
-        }
-    },
-
-    // Carregar do localStorage
-    loadFromStorage: (key, defaultValue = null) => {
-        try {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : defaultValue;
-        } catch (error) {
-            console.error('Erro ao carregar do localStorage:', error);
-            return defaultValue;
-        }
-    },
-
-    // Mostrar loading
-    showLoading: () => {
-        document.getElementById('loadingSpinner').style.display = 'flex';
-        AppState.isLoading = true;
-    },
-
-    // Esconder loading
-    hideLoading: () => {
-        document.getElementById('loadingSpinner').style.display = 'none';
-        AppState.isLoading = false;
-    },
-
-    // Mostrar notificação
-    showNotification: (message, type = 'success') => {
-        const notification = document.getElementById('notification');
-        const icon = notification.querySelector('.notification-icon');
-        const messageEl = notification.querySelector('.notification-message');
-
-        // Definir ícone baseado no tipo
-        const icons = {
-            success: 'fas fa-check-circle',
-            error: 'fas fa-exclamation-circle',
-            warning: 'fas fa-exclamation-triangle',
-            info: 'fas fa-info-circle'
-        };
-
-        icon.className = `notification-icon ${icons[type] || icons.success}`;
-        messageEl.textContent = message;
-
-        notification.classList.add('show');
-
-        // Remover após 3 segundos
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    },
-
-    // Scroll suave para elemento
-    scrollToElement: (elementId) => {
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    },
-
-    // Validar email
-    isValidEmail: (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    },
-
-    // Gerar ID único
-    generateId: () => {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-};
+// Utils será carregado do arquivo utils.js
 
 // Gerenciador básico de produtos para main.js
 const MainProductManager = {
@@ -373,27 +260,20 @@ const MainProductManager = {
         `;
     },
 
-    // Renderizar lista de produtos
+    // Usar renderProductList do ProductManager para evitar duplicação
     renderProductList: (products, containerId) => {
         const container = document.getElementById(containerId);
         if (!container) return;
-
-        if (products.length === 0) {
-            container.innerHTML = `
-                <div class="no-products">
-                    <i class="fas fa-search"></i>
-                    <p>Nenhum produto encontrado</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = products.map(product => MainProductManager.renderProduct(product)).join('');
         
-        // Adicionar animação
-        container.querySelectorAll('.product-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-            card.classList.add('fade-in');
+        // Limpa o container
+        container.innerHTML = '';
+        
+        // Cria elementos de forma segura
+        products.forEach(product => {
+            const productHTML = MainProductManager.renderProduct(product);
+            const tempDiv = document.createElement('div');
+            SecurityUtils.safeSetHTML(tempDiv, productHTML);
+            container.appendChild(tempDiv.firstElementChild);
         });
     }
 };
@@ -479,7 +359,11 @@ window.toggleCart = () => {
 };
 
 window.scrollToOffers = () => {
-    Utils.scrollToElement('offers');
+    // Rolar para a seção de categorias já que a seção de ofertas foi removida
+    const categoriesSection = document.querySelector('.categories-section');
+    if (categoriesSection) {
+        categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
 };
 
 window.subscribeNewsletter = (event) => {
@@ -511,49 +395,47 @@ function updateCartUI() {
 
 function renderCartItems() {
     const cartItems = document.getElementById('cartItems');
-    const cartFooter = document.getElementById('cartFooter');
-    
+    if (!cartItems) return;
+
     if (AppState.cart.length === 0) {
-        cartItems.innerHTML = `
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <p>Seu carrinho está vazio</p>
-                <button onclick="toggleCart()">Continuar Comprando</button>
-            </div>
+        const emptyMessage = SecurityUtils.createElement('div', { class: 'empty-cart' });
+        emptyMessage.innerHTML = `
+            <i class="fas fa-shopping-cart"></i>
+            <p>Seu carrinho está vazio</p>
+            <button onclick="toggleCart()" class="btn btn-primary">Continuar Comprando</button>
         `;
-        cartFooter.style.display = 'none';
+        cartItems.innerHTML = '';
+        cartItems.appendChild(emptyMessage);
         return;
     }
+
+    // Limpa o container
+    cartItems.innerHTML = '';
     
-    cartItems.innerHTML = AppState.cart.map(item => `
-        <div class="cart-item">
-            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-            <div class="cart-item-info">
-                <div class="cart-item-title">${item.name}</div>
-                <div class="cart-item-price">${Utils.formatPrice(item.price)}</div>
-                <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, -1)">-</button>
-                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" 
-                           onchange="setCartQuantity(${item.id}, this.value)">
-                    <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+    // Adiciona cada item do carrinho de forma segura
+    AppState.cart.forEach(item => {
+        const itemHTML = `
+            <div class="cart-item" data-product-id="${item.id}">
+                <img src="${SecurityUtils.escapeHTML(item.image)}" alt="${SecurityUtils.escapeHTML(item.name)}" class="cart-item-image">
+                <div class="cart-item-info">
+                    <h4>${SecurityUtils.escapeHTML(item.name)}</h4>
+                    <p class="cart-item-price">R$ ${item.price.toFixed(2)}</p>
+                </div>
+                <div class="cart-item-controls">
+                    <button onclick="updateCartQuantity(${item.id}, -1)" class="btn-quantity">-</button>
+                    <input type="number" value="${item.quantity}" min="1" onchange="setCartQuantity(${item.id}, this.value)" class="quantity-input">
+                    <button onclick="updateCartQuantity(${item.id}, 1)" class="btn-quantity">+</button>
+                    <button onclick="removeFromCart(${item.id})" class="btn-remove">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </div>
-            <button class="remove-item" onclick="removeFromCart(${item.id})">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `).join('');
-    
-    // Calcular totais
-    const subtotal = AppState.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = subtotal > 200 ? 0 : 15; // Frete grátis acima de R$ 200
-    const total = subtotal + shipping;
-    
-    document.getElementById('cartSubtotal').textContent = Utils.formatPrice(subtotal);
-    document.getElementById('cartShipping').textContent = shipping === 0 ? 'Grátis' : Utils.formatPrice(shipping);
-    document.getElementById('cartTotal').textContent = Utils.formatPrice(total);
-    
-    cartFooter.style.display = 'block';
+        `;
+        
+        const tempDiv = document.createElement('div');
+        SecurityUtils.safeSetHTML(tempDiv, itemHTML);
+        cartItems.appendChild(tempDiv.firstElementChild);
+    });
 }
 
 window.updateCartQuantity = (productId, change) => {
@@ -663,7 +545,17 @@ function showSlide(index) {
 }
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Aguardar inicialização do banco SQLite
+    if (window.productDB) {
+        try {
+            await window.productDB.init();
+            console.log('Banco SQLite inicializado no main.js');
+        } catch (error) {
+            console.error('Erro ao inicializar banco SQLite no main.js:', error);
+        }
+    }
+    
     // Carregar dados salvos
     AppState.cart = Utils.loadFromStorage(CONFIG.STORAGE_KEYS.CART, []);
     AppState.user = Utils.loadFromStorage(CONFIG.STORAGE_KEYS.USER, null);
@@ -716,6 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // CompreAqui E-commerce inicializado
     console.log('CompreAqui E-commerce inicializado com sucesso!');
 });
 
@@ -726,18 +619,28 @@ window.goToSlide = goToSlide;
 // Funções de sugestão de busca
 function showSearchSuggestions(query) {
     const suggestions = document.getElementById('searchSuggestions');
-    const products = ProductManager.searchProducts(query).slice(0, 5);
+    if (!suggestions) return;
+
+    const products = MainProductManager.searchProducts(query).slice(0, 5);
     
-    if (products.length > 0) {
-        suggestions.innerHTML = products.map(product => `
-            <div class="suggestion-item" onclick="selectSuggestion('${product.name}')">
-                <i class="fas fa-search"></i> ${product.name}
+    // Limpa sugestões
+    suggestions.innerHTML = '';
+    
+    // Adiciona produtos de forma segura
+    products.forEach(product => {
+        const suggestionHTML = `
+            <div class="search-suggestion" onclick="selectSuggestion('${SecurityUtils.escapeHTML(product.name)}')">
+                <img src="${SecurityUtils.escapeHTML(product.image)}" alt="${SecurityUtils.escapeHTML(product.name)}">
+                <span>${SecurityUtils.escapeHTML(product.name)}</span>
             </div>
-        `).join('');
-        suggestions.style.display = 'block';
-    } else {
-        hideSearchSuggestions();
-    }
+        `;
+        
+        const tempDiv = document.createElement('div');
+        SecurityUtils.safeSetHTML(tempDiv, suggestionHTML);
+        suggestions.appendChild(tempDiv.firstElementChild);
+    });
+    
+    suggestions.style.display = products.length > 0 ? 'block' : 'none';
 }
 
 function hideSearchSuggestions() {
@@ -753,5 +656,4 @@ window.selectSuggestion = (suggestion) => {
 
 // Exportar para uso global
 window.AppState = AppState;
-window.Utils = Utils;
 window.MainProductManager = MainProductManager;

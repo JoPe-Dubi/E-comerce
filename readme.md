@@ -99,8 +99,8 @@ Acesse: http://localhost:8080
 ## 👤 Credenciais de Teste
 
 **Administrador:**
-- Email: `odubiella@gmail.com`
-- Senha: `@Trairagemtv19`
+- Email: `admin@exemplo.com`
+- Senha: `admin123`
 
 ## 🎨 Design System
 

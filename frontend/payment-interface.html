@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pagamento</title>
+    <link rel="stylesheet" href="payment-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="payment-container">
+        <!-- Header -->
+        <header class="payment-header">
+            <h1><i class="fas fa-credit-card"></i> Finalizar Pagamento</h1>
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Pagamento 100% Seguro</span>
+            </div>
+        </header>
+
+        <!-- Resumo do Pedido -->
+        <section class="order-summary">
+            <h2><i class="fas fa-shopping-cart"></i> Resumo do Pedido</h2>
+            <div class="order-items" id="orderItems">
+                <!-- Itens serão carregados dinamicamente -->
+            </div>
+            <div class="order-total">
+                <div class="total-line">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">R$ 0,00</span>
+                </div>
+                <div class="total-line">
+                    <span>Frete:</span>
+                    <span id="shipping">R$ 0,00</span>
+                </div>
+                <div class="total-line total-final">
+                    <span>Total:</span>
+                    <span id="totalAmount">R$ 0,00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seleção de Método de Pagamento -->
+        <section class="payment-methods">
+            <h2><i class="fas fa-money-check-alt"></i> Escolha a Forma de Pagamento</h2>
+            
+            <div class="payment-options">
+                <!-- PIX -->
+                <div class="payment-option" data-method="pix">
+                    <div class="option-header">
+                        <input type="radio" name="paymentMethod" id="pix" value="pix">
+                        <label for="pix">
+                            <div class="option-icon">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <div class="option-info">
+                                <h3>PIX</h3>
+                                <p>Pagamento instantâneo via QR Code ou Pix Copia e Cola</p>
+                                <span class="discount">Desconto de 5%</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cartão de Crédito -->
+                <div class="payment-option" data-method="credit_card">
+                    <div class="option-header">
+                        <input type="radio" name="paymentMethod" id="credit_card" value="credit_card">
+                        <label for="credit_card">
+                            <div class="option-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="option-info">
+                                <h3>Cartão de Crédito</h3>
+                                <p>Parcelamento em até 12x sem juros</p>
+                                <div class="card-brands">
+                                    <img src="https://via.placeholder.com/30x20/0052CC/FFFFFF?text=VISA" alt="Visa">
+                                    <img src="https://via.placeholder.com/30x20/EB001B/FFFFFF?text=MC" alt="Mastercard">
+                                    <img src="https://via.placeholder.com/30x20/006FCF/FFFFFF?text=AMEX" alt="American Express">
+                                    <img src="https://via.placeholder.com/30x20/FF6900/FFFFFF?text=ELO" alt="Elo">
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cartão de Débito -->
+                <div class="payment-option" data-method="debit_card">
+                    <div class="option-header">
+                        <input type="radio" name="paymentMethod" id="debit_card" value="debit_card">
+                        <label for="debit_card">
+                            <div class="option-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="option-info">
+                                <h3>Cartão de Débito</h3>
+                                <p>Débito direto na conta corrente</p>
+                                <span class="discount">Desconto de 3%</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Boleto Bancário -->
+                <div class="payment-option" data-method="boleto">
+                    <div class="option-header">
+                        <input type="radio" name="paymentMethod" id="boleto" value="boleto">
+                        <label for="boleto">
+                            <div class="option-icon">
+                                <i class="fas fa-barcode"></i>
+                            </div>
+                            <div class="option-info">
+                                <h3>Boleto Bancário</h3>
+                                <p>Vencimento em 3 dias úteis</p>
+                                <span class="processing-time">Processamento em até 2 dias úteis</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulários de Pagamento -->
+        <section class="payment-forms">
+            <!-- Formulário PIX -->
+            <div class="payment-form" id="pixForm" style="display: none;">
+                <h3><i class="fas fa-qrcode"></i> Pagamento via PIX</h3>
+                <div class="pix-info">
+                    <p>Após confirmar o pedido, você receberá o QR Code para pagamento instantâneo.</p>
+                    <div class="pix-benefits">
+                        <div class="benefit">
+                            <i class="fas fa-bolt"></i>
+                            <span>Pagamento instantâneo</span>
+                        </div>
+                        <div class="benefit">
+                            <i class="fas fa-percentage"></i>
+                            <span>5% de desconto</span>
+                        </div>
+                        <div class="benefit">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% seguro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário Cartão -->
+            <div class="payment-form" id="cardForm" style="display: none;">
+                <h3><i class="fas fa-credit-card"></i> Dados do Cartão</h3>
+                <form id="cardPaymentForm">
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="cardNumber">Número do Cartão</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                                <div class="card-brand-icon" id="cardBrandIcon"></div>
+                            </div>
+                            <div class="error-message" id="cardNumberError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardName">Nome no Cartão</label>
+                            <input type="text" id="cardName" name="cardName" placeholder="Nome como está no cartão" required>
+                            <div class="error-message" id="cardNameError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiry">Validade</label>
+                            <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA" maxlength="5" required>
+                            <div class="error-message" id="cardExpiryError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvv">CVV</label>
+                            <div class="input-with-tooltip">
+                                <input type="text" id="cardCvv" name="cardCvv" placeholder="000" maxlength="4" required>
+                                <div class="tooltip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span class="tooltip-text">Código de 3 ou 4 dígitos no verso do cartão</span>
+                                </div>
+                            </div>
+                            <div class="error-message" id="cardCvvError"></div>
+                        </div>
+                    </div>
+
+                    <!-- Parcelamento (apenas para crédito) -->
+                    <div class="form-row" id="installmentsRow" style="display: none;">
+                        <div class="form-group full-width">
+                            <label for="installments">Parcelamento</label>
+                            <select id="installments" name="installments">
+                                <option value="1">1x de R$ 0,00 (à vista)</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Formulário Boleto -->
+            <div class="payment-form" id="boletoForm" style="display: none;">
+                <h3><i class="fas fa-barcode"></i> Pagamento via Boleto</h3>
+                <div class="boleto-info">
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <strong>Vencimento:</strong>
+                            <span id="boletoExpiryDate"></span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Processamento:</strong>
+                            <span>Até 2 dias úteis após o pagamento</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-download"></i>
+                        <div>
+                            <strong>Como pagar:</strong>
+                            <span>Baixe o boleto após a confirmação e pague em qualquer banco</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dados do Cliente -->
+        <section class="customer-data">
+            <h2><i class="fas fa-user"></i> Dados do Cliente</h2>
+            <form id="customerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerName">Nome Completo</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                        <div class="error-message" id="customerNameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerDocument">CPF/CNPJ</label>
+                        <input type="text" id="customerDocument" name="customerDocument" placeholder="000.000.000-00" required>
+                        <div class="error-message" id="customerDocumentError"></div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerEmail">E-mail</label>
+                        <input type="email" id="customerEmail" name="customerEmail" required>
+                        <div class="error-message" id="customerEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Telefone</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" placeholder="(11) 99999-9999" required>
+                        <div class="error-message" id="customerPhoneError"></div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Endereço de Cobrança -->
+        <section class="billing-address">
+            <h2><i class="fas fa-map-marker-alt"></i> Endereço de Cobrança</h2>
+            <form id="addressForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zipCode">CEP</label>
+                        <input type="text" id="zipCode" name="zipCode" placeholder="00000-000" maxlength="9" required>
+                        <div class="error-message" id="zipCodeError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Endereço</label>
+                        <input type="text" id="street" name="street" required>
+                        <div class="error-message" id="streetError"></div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="number">Número</label>
+                        <input type="text" id="number" name="number" required>
+                        <div class="error-message" id="numberError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="complement">Complemento</label>
+                        <input type="text" id="complement" name="complement" placeholder="Opcional">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="neighborhood">Bairro</label>
+                        <input type="text" id="neighborhood" name="neighborhood" required>
+                        <div class="error-message" id="neighborhoodError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Cidade</label>
+                        <input type="text" id="city" name="city" required>
+                        <div class="error-message" id="cityError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">Estado</label>
+                        <select id="state" name="state" required>
+                            <option value="">Selecione</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                        <div class="error-message" id="stateError"></div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Botões de Ação -->
+        <section class="payment-actions">
+            <div class="action-buttons">
+                <button type="button" class="btn btn-secondary" id="backButton">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar
+                </button>
+                <button type="button" class="btn btn-primary" id="processPaymentButton">
+                    <i class="fas fa-lock"></i>
+                    Finalizar Pagamento
+                    <span class="loading-spinner" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+            </div>
+            
+            <div class="security-info">
+                <div class="security-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Seus dados estão protegidos com criptografia SSL</span>
+                </div>
+                <div class="security-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Transação 100% segura</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de Resultado -->
+    <div class="modal" id="resultModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo será inserido dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="modalConfirm">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <p>Processando pagamento...</p>
+        </div>
+    </div>
+
+    <script src="payment-script.js"></script>
+</body>
+</html>

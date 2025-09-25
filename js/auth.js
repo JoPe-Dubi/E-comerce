@@ -52,7 +52,7 @@ const AuthManager = {
 
         try {
             // Sistema de autenticação local (sem backend)
-            if (email === 'odubiella@gmail.com' && password === '@Trairagemtv19') {
+            if (email === 'admin@exemplo.com' && password === 'admin123') {
                 const mockUser = {
                     id: 1,
                     name: 'Administrador',
@@ -257,10 +257,10 @@ const AuthManager = {
         }, 100);
     },
 
-    // Mostrar perfil do usuário
+    // Mostrar perfil - redirecionar para página de complementação
     showProfile: () => {
         document.querySelector('.user-dropdown-menu')?.remove();
-        Utils.showNotification('Página de perfil em desenvolvimento', 'info');
+        window.location.href = 'pages/profile-completion.html';
     },
 
     // Mostrar pedidos do usuário
@@ -272,8 +272,56 @@ const AuthManager = {
     // Mostrar catálogo de produtos para administradores
     showAdminCatalog: () => {
         document.querySelector('.user-dropdown-menu')?.remove();
-        window.location.href = 'pages/admin-catalog.html';
+        window.location.href = 'pages/admin-add-product.html';
     },
+
+    // Mostrar modal de perfil
+    showProfileModal: () => {
+        // Criar modal de perfil
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.id = 'profileModal';
+        modal.style.display = 'block';
+
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Perfil do Usuário</h2>
+                    <p>Informações da sua conta</p>
+                    <span class="close" onclick="AuthManager.closeProfileModal()">&times;</span>
+                </div>
+                <div id="profileInfo">
+                    <div class="form-group">
+                        <label for="profileName">Nome:</label>
+                        <input type="text" id="profileName" value="${AuthState.user?.name || ''}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email:</label>
+                        <input type="email" id="profileEmail" value="${AuthState.user?.email || ''}" readonly>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Fechar modal ao clicar fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                AuthManager.closeProfileModal();
+            }
+        });
+    },
+
+    // Fechar modal de perfil
+    closeProfileModal: () => {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.remove();
+        }
+    },
+
+
 
     // Abrir modal de autenticação
     openModal: () => {
@@ -427,6 +475,122 @@ window.togglePasswordVisibility = (inputId) => {
     }
 };
 
-// Credenciais de teste:
-// Email: odubiella@gmail.com | Senha: @Trairagemtv19
-console.log('Sistema de autenticação inicializado. Credenciais de teste: odubiella@gmail.com / @Trairagemtv19');
+// Sistema de autenticação inicializado
+function showUserProfile(user) {
+    const userProfileContainer = document.getElementById('user-profile');
+    if (!userProfileContainer) return;
+    
+    // Limpar container
+    userProfileContainer.innerHTML = '';
+    
+    // Criar elementos de forma segura
+    const profileDiv = document.createElement('div');
+    profileDiv.className = 'user-profile-info';
+    
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'user-avatar';
+    
+    const avatarImg = document.createElement('img');
+    avatarImg.src = user.avatar || 'img/avatars/default.jpg';
+    avatarImg.alt = 'Avatar do usuário';
+    avatarImg.loading = 'lazy';
+    
+    avatarDiv.appendChild(avatarImg);
+    
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'user-info';
+    
+    const nameElement = document.createElement('h3');
+    nameElement.textContent = user.name;
+    
+    const emailElement = document.createElement('p');
+    emailElement.textContent = user.email;
+    
+    infoDiv.appendChild(nameElement);
+    infoDiv.appendChild(emailElement);
+    
+    profileDiv.appendChild(avatarDiv);
+    profileDiv.appendChild(infoDiv);
+    
+    userProfileContainer.appendChild(profileDiv);
+}
+
+function renderLoginForm() {
+    const authContainer = document.getElementById('auth-container');
+    if (!authContainer) return;
+    
+    // Limpar container
+    authContainer.innerHTML = '';
+    
+    // Criar formulário de forma segura
+    const form = document.createElement('form');
+    form.className = 'auth-form login-form';
+    form.id = 'loginForm';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Entrar';
+    
+    const emailGroup = document.createElement('div');
+    emailGroup.className = 'form-group';
+    
+    const emailLabel = document.createElement('label');
+    emailLabel.textContent = 'Email:';
+    emailLabel.setAttribute('for', 'loginEmail');
+    
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.id = 'loginEmail';
+    emailInput.name = 'email';
+    emailInput.required = true;
+    emailInput.placeholder = 'Digite seu email';
+    
+    emailGroup.appendChild(emailLabel);
+    emailGroup.appendChild(emailInput);
+    
+    const passwordGroup = document.createElement('div');
+    passwordGroup.className = 'form-group';
+    
+    const passwordLabel = document.createElement('label');
+    passwordLabel.textContent = 'Senha:';
+    passwordLabel.setAttribute('for', 'loginPassword');
+    
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.id = 'loginPassword';
+    passwordInput.name = 'password';
+    passwordInput.required = true;
+    passwordInput.placeholder = 'Digite sua senha';
+    
+    passwordGroup.appendChild(passwordLabel);
+    passwordGroup.appendChild(passwordInput);
+    
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.className = 'btn btn-primary';
+    submitBtn.textContent = 'Entrar';
+    
+    const registerLink = document.createElement('p');
+    registerLink.className = 'auth-link';
+    registerLink.textContent = 'Não tem conta? ';
+    
+    const registerLinkAnchor = document.createElement('a');
+    registerLinkAnchor.href = '#';
+    registerLinkAnchor.textContent = 'Cadastre-se';
+    registerLinkAnchor.onclick = (e) => {
+        e.preventDefault();
+        renderRegisterForm();
+    };
+    
+    registerLink.appendChild(registerLinkAnchor);
+    
+    form.appendChild(title);
+    form.appendChild(emailGroup);
+    form.appendChild(passwordGroup);
+    form.appendChild(submitBtn);
+    form.appendChild(registerLink);
+    
+    authContainer.appendChild(form);
+    
+    // Adicionar event listener
+    form.addEventListener('submit', handleLogin);
+}
